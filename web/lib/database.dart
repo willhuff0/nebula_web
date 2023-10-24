@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:uuid/uuid.dart';
 
-import 'assets/texture.dart';
 import 'engine.dart';
 
 const _builtInDeserializers = {
@@ -52,7 +50,7 @@ class AssetDatabase {
         final uuid = collectionEntry.key;
         final header = collectionEntry.value;
 
-        final asset = await deserializer.deserialize(this, header);
+        final asset = await deserializer.deserialize(this, uuid, header);
         collection[uuid] = asset;
       }));
       assets[type] = collection;
@@ -70,6 +68,12 @@ class AssetDatabase {
     nlog('  Stage 2: Done.');
 
     nlog('  Stage 3: Buffering.');
+    await Future.wait(_assets.entries.fold(<Future<void>>[], (value, collection) {
+      collection.value.forEach((uuid, asset) {
+        value.add(asset.importBuffer());
+      });
+      return value;
+    }));
     nlog('  Stage 3: Done.');
 
     _assets.addAll(assets);
@@ -77,19 +81,4 @@ class AssetDatabase {
   }
 
   Uint8List getData(int start, int end) => _pack.sublist(start, end);
-}
-
-abstract class Asset {
-  final AssetDatabase database;
-  final Uuid uuid;
-
-  Asset(this.database, this.uuid);
-
-  Future<void> importLookupReferences();
-  Future<void> importBuffer();
-}
-
-abstract interface class AssetDeserializer<TAsset extends Asset> {
-  String get type;
-  Future<TAsset> deserialize(AssetDatabase database, Map<String, dynamic> header);
 }
