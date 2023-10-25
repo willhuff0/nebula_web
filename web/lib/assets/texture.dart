@@ -18,7 +18,15 @@ class TextureAsset extends Asset {
     final bytes = data.get(database);
 
     _texture = gl.createTexture();
+    gl.bindTexture(WebGL.TEXTURE_2D, _texture);
     gl.compressedTexImage2D(WebGL.TEXTURE_2D, 0, format, width, height, 0, bytes);
+    gl.texParameteri(WebGL.TEXTURE_2D, ExtTextureFilterAnisotropic.TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
+    gl.generateMipmap(WebGL.TEXTURE_2D);
+  }
+
+  void bind(int slot) {
+    gl.activeTexture(slot);
+    gl.bindTexture(WebGL.TEXTURE_2D, _texture);
   }
 
   @override

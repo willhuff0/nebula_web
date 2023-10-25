@@ -40,7 +40,7 @@ class AssetDatabase {
 
       final deserializer = _deserializers[type];
       if (deserializer == null) {
-        nlog('    Error: No deserializer for $type');
+        nerror('    No deserializer for $type');
         return;
       }
 
@@ -81,4 +81,6 @@ class AssetDatabase {
   }
 
   Uint8List getData(int start, int end) => _pack.sublist(start, end);
+
+  TAsset getAsset<TAsset extends Asset>(String type, String uuid) => _assets[type]![uuid] as TAsset;
 }
