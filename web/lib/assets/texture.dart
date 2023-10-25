@@ -56,3 +56,8 @@ class TextureAssetDeserializer implements AssetDeserializer<TextureAsset> {
   @override
   String get type => 'texture';
 }
+
+class TextureImporter implements Importer<TextureAsset> {
+  @override
+  Future<TextureAsset> import(String fileName, Uint8List data) {}
+}

@@ -1,8 +1,10 @@
-import 'dart:typed_data';
-
 import 'engine.dart';
 
+export 'dart:typed_data';
+
 export 'assets/texture.dart';
+export 'assets/shader.dart';
+export 'assets/material.dart';
 
 typedef JsonValue = dynamic;
 
@@ -105,4 +107,8 @@ class CachedAssetReference<TAsset extends Asset> implements Serializable {
 
   @override
   serialize() => _uuid!;
+}
+
+abstract interface class Importer<TAsset extends Asset> {
+  Future<TAsset> import(String fileName, Uint8List data);
 }
